@@ -43,6 +43,7 @@ class CityOverviewWeatherItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //TODO keep all items in 1 card with min height for better UI
     return Selector<WeatherStore, AsyncResource<SingleForcastItem>>(
         builder: (context, value, child) {
       if (value is AsyncResourceError) {
@@ -61,8 +62,10 @@ class CityOverviewWeatherItem extends StatelessWidget {
       if (cityResource is AsyncResourceSuccess<WeatherData>) {
         final forcast = cityResource.data.forcastItems.first;
         return AsyncResourceSuccess(forcast);
+      } else if (cityResource is AsyncResourceError) {
+        return AsyncResourceError();
       } else {
-        return null;
+        return AsyncResourceLoading();
       }
     });
   }

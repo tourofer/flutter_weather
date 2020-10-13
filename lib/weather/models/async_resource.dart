@@ -6,6 +6,7 @@ abstract class AsyncResource<T> {}
 @immutable
 class AsyncResourceEmpty<T> extends AsyncResource<T> {}
 
+@immutable
 class AsyncResourceLoading<T> extends AsyncResource<T> {}
 
 @immutable

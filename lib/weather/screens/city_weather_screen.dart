@@ -25,19 +25,33 @@ class CityWeatherScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text('Weather'),
         ),
-        body: Selector<WeatherStore, AsyncResource<WeatherData>>(
-          builder: (context, value, child) {
-            if (value is AsyncResourceSuccess) {
-              return DailyForcastWidget(
-                data: (value as AsyncResourceSuccess).data,
-              );
-            } else if (value is AsyncResourceError) {
-              return Center(child: WeatherErrorWidget());
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-          selector: (_, store) => store.items[city.id],
-        ));
+        body: CityWeatherContent(city: city));
+  }
+}
+
+class CityWeatherContent extends StatelessWidget {
+  const CityWeatherContent({
+    Key key,
+    @required this.city,
+  }) : super(key: key);
+
+  final City city;
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<WeatherStore, AsyncResource<WeatherData>>(
+      builder: (context, value, child) {
+        if (value is AsyncResourceSuccess) {
+          return DailyForcastWidget(
+            data: (value as AsyncResourceSuccess).data,
+          );
+        } else if (value is AsyncResourceError) {
+          return Center(child: WeatherErrorWidget());
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+      selector: (_, store) => store.items[city.id],
+    );
   }
 }

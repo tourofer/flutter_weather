@@ -10,7 +10,7 @@ import 'weatherStates.dart';
 
 class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
+  //TODO REMOE THE BLOC AND SWITCH TO CUBIT
   final WeatherStore weatherStore;
 
   WeatherBloc(this.weatherStore) : super(WeatherStateLoading()) {

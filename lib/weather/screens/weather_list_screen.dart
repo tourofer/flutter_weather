@@ -29,14 +29,23 @@ class _WeatherScreenListState extends State<WeatherScreenList> {
     //TODO suppport add city, swipe to delete & reorder
     return Scaffold(
         appBar: AppBar(title: Text('Cities Weather')),
-        body: Selector<WeatherStore, List<City>>(
-            builder: (context, value, child) => ListView.builder(
-                  itemCount: value.length,
-                  itemBuilder: (context, index) => CityOverviewWeatherItem(
-                    city: value[index],
-                  ),
-                ),
-            selector: (context, store) => store.cities));
+        body: Consumer<WeatherStore>(
+            builder: (context, store, child) => ReorderableListView(
+                  children: store.cities
+                      .asMap()
+                      .entries
+                      .map(
+                        (e) => CityOverviewWeatherItem(
+                          key: ValueKey(store.cities[e.key]),
+                          city: store.cities[e.key],
+                        ),
+                      )
+                      .toList(),
+                  onReorder: (oldIndex, newIndex) => {
+                    Provider.of<WeatherStore>(context, listen: false)
+                        .reorderCity(oldIndex, newIndex)
+                  },
+                )));
   }
 }
 
@@ -49,6 +58,7 @@ class CityOverviewWeatherItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

@@ -6,7 +6,7 @@ import 'async_resource.dart';
 class WeatherStore extends ChangeNotifier {
   final Map<String, AsyncResource<WeatherData>> _weatherMap = new Map();
 
-  final List<City> _cities = new List()
+  List<City> _cities = new List()
     ..add(new City("London", "44418"))
     ..add(new City("San-fransisco", "2487956"));
 
@@ -16,6 +16,13 @@ class WeatherStore extends ChangeNotifier {
 
   void add(String cityId, AsyncResource<WeatherData> state) {
     _weatherMap[cityId] = state;
+    notifyListeners();
+  }
+
+  reorderCity(int oldIndex, int newIndex) {
+    final element = _cities[oldIndex];
+    cities.removeAt(oldIndex);
+    _cities.insert(newIndex, element);
     notifyListeners();
   }
 }

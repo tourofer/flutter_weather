@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weather_model.dart';
+import 'package:ofer_intro_flutter/weather/models/city_model.dart';
+import 'package:ofer_intro_flutter/weather/models/weather_model.dart';
 
-import 'async_resource.dart';
+import '../models/async_resource.dart';
 
 class WeatherStore extends ChangeNotifier {
   final Map<String, AsyncResource<WeatherData>> _weatherMap = new Map();
@@ -14,22 +15,22 @@ class WeatherStore extends ChangeNotifier {
 
   Map<String, AsyncResource<WeatherData>> get items => _weatherMap;
 
-  void add(String cityId, AsyncResource<WeatherData> state) {
+  void addCityWeatherData(String cityId, AsyncResource<WeatherData> state) {
     _weatherMap[cityId] = state;
     notifyListeners();
   }
 
   reorderCity(int oldIndex, int newIndex) {
-    final element = _cities[oldIndex];
-    cities.removeAt(oldIndex);
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+    final element = _cities.removeAt(oldIndex);
     _cities.insert(newIndex, element);
     notifyListeners();
   }
-}
 
-class City {
-  final String name;
-  final String id;
-
-  City(this.name, this.id);
+  void addCity(City city) {
+    _cities.add(city);
+    notifyListeners();
+  }
 }

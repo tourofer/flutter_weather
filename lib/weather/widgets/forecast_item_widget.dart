@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weather_model.dart';
+import 'package:ofer_intro_flutter/weather/models/weather_model.dart';
 
 class ForcastItemWidget extends StatelessWidget {
   final SingleForcastItem data;

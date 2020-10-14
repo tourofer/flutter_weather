@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weather_cubit.dart';
+import 'package:ofer_intro_flutter/weather/bloc/fetch_weather_cubit.dart';
 
 class WeatherErrorWidget extends StatelessWidget {
   final bool hadConnection;
@@ -18,7 +18,7 @@ class WeatherErrorWidget extends StatelessWidget {
           RaisedButton(
               child: Text("Retry"),
               onPressed: () =>
-                  context.bloc<WeatherCubit>().fetchAllCitiesWeather())
+                  context.bloc<FetchWeatherCubit>().fetchAllCitiesWeather())
         ],
       ),
     );

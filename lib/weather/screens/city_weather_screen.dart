@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weather_model.dart';
+import 'package:ofer_intro_flutter/weather/models/city_model.dart';
+import 'package:ofer_intro_flutter/weather/models/weather_model.dart';
 import 'package:ofer_intro_flutter/weather/widgets/async_resource_consumer.dart';
 import 'package:ofer_intro_flutter/weather/widgets/daily_forcast_widget.dart';
 import 'package:ofer_intro_flutter/weather/widgets/weather_error_widget.dart';
 
-import '../models/weather_change_notifier.dart';
+import '../bloc/weather_change_notifier.dart';
 
 class CityWeatherScreenArguments {
   final City city;

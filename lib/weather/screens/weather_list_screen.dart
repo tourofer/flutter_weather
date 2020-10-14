@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weather_cubit.dart';
+import 'package:ofer_intro_flutter/weather/bloc/fetch_weather_cubit.dart';
 import 'package:ofer_intro_flutter/weather/models/app_navigator.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weather_model.dart';
+import 'package:ofer_intro_flutter/weather/models/city_model.dart';
+import 'package:ofer_intro_flutter/weather/models/weather_model.dart';
 import 'package:ofer_intro_flutter/weather/models/async_resource.dart';
-import 'package:ofer_intro_flutter/weather/models/weather_change_notifier.dart';
+import 'package:ofer_intro_flutter/weather/bloc/weather_change_notifier.dart';
 import 'package:ofer_intro_flutter/weather/widgets/async_resource_consumer.dart';
+import 'package:ofer_intro_flutter/weather/widgets/cities_search_delegate.dart';
 import 'package:ofer_intro_flutter/weather/widgets/forecast_item_widget.dart';
 import 'package:ofer_intro_flutter/weather/widgets/weather_error_widget.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +22,8 @@ class _WeatherScreenListState extends State<WeatherScreenList> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<WeatherCubit>(context, listen: false).fetchAllCitiesWeather();
+      Provider.of<FetchWeatherCubit>(context, listen: false)
+          .fetchAllCitiesWeather();
     });
   }
 
@@ -28,7 +31,23 @@ class _WeatherScreenListState extends State<WeatherScreenList> {
   Widget build(BuildContext context) {
     //TODO suppport add city, swipe to delete & reorder
     return Scaffold(
-        appBar: AppBar(title: Text('Cities Weather')),
+        appBar: AppBar(
+          title: Text('Cities Weather'),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: GestureDetector(
+                  onTap: () {
+                    showSearch(
+                        context: context, delegate: CitiesSearchDelegate());
+                  },
+                  child: Icon(
+                    Icons.search,
+                    size: 26.0,
+                  )),
+            )
+          ],
+        ),
         body: Consumer<WeatherStore>(
             builder: (context, store, child) => ReorderableListView(
                   children: store.cities

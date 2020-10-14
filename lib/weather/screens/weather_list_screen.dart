@@ -44,30 +44,46 @@ class CityOverviewWeatherItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AsyncResourceConsumer<WeatherStore, SingleForcastItem>(
-        onError: (_) => WeatherErrorWidget(),
-        onSuccess: (data) => CitiesWeatherListWidget(
-              city: city,
-              forcastItem: data,
-            ),
-        onLoading: () => Center(child: CircularProgressIndicator()),
-        selector: (_, store) {
-          //only listen to the relevant item latest weather forcast
-          final AsyncResource<WeatherData> cityResource = store.items[city.id];
-          if (cityResource is AsyncResourceSuccess<WeatherData>) {
-            final forcast = cityResource.data.forcastItems.first;
-            return AsyncResourceSuccess(forcast);
-          } else if (cityResource is AsyncResourceError) {
-            return AsyncResourceError();
-          } else {
-            return AsyncResourceLoading();
-          }
-        });
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, left: 8.0),
+            child: Text('${city.name}:'),
+          ),
+          AsyncResourceConsumer<WeatherStore, SingleForcastItem>(
+              onError: (_) => WeatherErrorWidget(),
+              onSuccess: (data) => CityWeatherWidget(
+                    city: city,
+                    forcastItem: data,
+                  ),
+              onLoading: () => Container(
+                  constraints: BoxConstraints(minHeight: 100),
+                  child: Center(child: CircularProgressIndicator())),
+              selector: latestCityForcastSelector),
+        ],
+      ),
+    );
+  }
+
+  AsyncResource<SingleForcastItem> latestCityForcastSelector(_, store) {
+    //only listen to the relevant item latest weather forcast
+    final AsyncResource<WeatherData> cityResource = store.items[city.id];
+    if (cityResource is AsyncResourceSuccess<WeatherData>) {
+      final forcast = cityResource.data.forcastItems.first;
+      return AsyncResourceSuccess(forcast);
+    } else if (cityResource is AsyncResourceError) {
+      return AsyncResourceError();
+    } else {
+      return AsyncResourceLoading();
+    }
   }
 }
 
-class CitiesWeatherListWidget extends StatelessWidget {
-  const CitiesWeatherListWidget({
+class CityWeatherWidget extends StatelessWidget {
+  const CityWeatherWidget({
     Key key,
     @required this.city,
     @required this.forcastItem,
@@ -78,19 +94,8 @@ class CitiesWeatherListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0, left: 8.0),
-          child: Text('${city.name}:'),
-        ),
-        GestureDetector(
-            onTap: () =>
-                AppNavigator.navigateToCityWeatherScreen(context, city),
-            child: ForcastItemWidget(data: forcastItem)),
-      ],
-    );
+    return GestureDetector(
+        onTap: () => AppNavigator.navigateToCityWeatherScreen(context, city),
+        child: ForcastItemWidget(data: forcastItem));
   }
 }

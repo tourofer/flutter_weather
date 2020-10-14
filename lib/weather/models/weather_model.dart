@@ -53,3 +53,14 @@ class SingleForcastItem {
         humidity: '${json['humidity']}%');
   }
 }
+
+extension SingleForcastItemExtention on SingleForcastItem {
+  AssetImage getWeatherIcon() {
+    var sanitzedName = this.weatherState.toLowerCase().replaceAll(" ", "_");
+
+    if (sanitzedName == "showers" || sanitzedName.contains("rain")) {
+      sanitzedName = "rain";
+    }
+    return AssetImage('assets/$sanitzedName.png');
+  }
+}

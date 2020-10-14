@@ -23,6 +23,8 @@ class QueryCitiesBloc extends Bloc<QueryCityEvent, QueryCitiesState> {
 
   @override
   Stream<QueryCitiesState> mapEventToState(QueryCityEvent event) async* {
+    print("yield loading");
+
     yield QueryCitiesStateLoading();
 
     try {
@@ -34,11 +36,14 @@ class QueryCitiesBloc extends Bloc<QueryCityEvent, QueryCitiesState> {
 
         final cities =
             List<City>.from(json.map((model) => City.fromJson(model)).toList());
+        print("yield data");
+
         yield QueryCitiesStateData(cities);
       } else {
         throw HttpException("got response code: ${response.statusCode}");
       }
     } catch (e) {
+      print("yield error");
       yield QueryCitiesStateError(await ConnectionChecker.isConnected());
     }
   }

@@ -23,7 +23,7 @@ class CityWeatherScreen extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text('Weather'),
+          title: Text(city.name),
         ),
         body: CityWeatherContent(city: city));
   }

@@ -15,7 +15,7 @@ class ForcastItemWidget extends StatelessWidget {
           contentPadding: EdgeInsets.all(8),
           title: Text(data.weatherState),
           subtitle: Text('Temp: ${data.minTempDisplay}-${data.maxTempDisplay}'),
-          leading: Image(image: AssetImage('assets/clear.png')),
+          leading: Image(image: data.getWeatherIcon()),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

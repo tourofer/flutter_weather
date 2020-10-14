@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ofer_intro_flutter/weather/bloc/fetch_weather_cubit.dart';
 import 'package:ofer_intro_flutter/weather/bloc/query_cities_bloc.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weather_change_notifier.dart';
 import 'package:ofer_intro_flutter/weather/models/city_model.dart';
 import 'package:ofer_intro_flutter/weather/widgets/weather_error_widget.dart';
-import 'package:provider/provider.dart';
 
 class CitiesSearchDelegate extends SearchDelegate {
+  final QueryCitiesBloc queryBloc;
+
+  CitiesSearchDelegate(this.queryBloc);
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -31,14 +34,10 @@ class CitiesSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    BlocProvider.of<QueryCitiesBloc>(context).add(QueryCityEvent(query));
+    queryBloc.add(QueryCityEvent(query));
 
-    return BlocConsumer<QueryCitiesBloc, QueryCitiesState>(
-      builder: (context, state) {
-        return _buildContent(state);
-      },
-      listener: (context, state) {},
-    );
+    return BlocBuilder(
+        cubit: queryBloc, builder: (context, state) => _buildContent(state));
   }
 
   @override
@@ -47,6 +46,7 @@ class CitiesSearchDelegate extends SearchDelegate {
   }
 
   Widget _buildContent(QueryCitiesState state) {
+    print("got state $state");
     if (state is QueryCitiesStateLoading) {
       return Center(
         child: CircularProgressIndicator(),
@@ -58,6 +58,9 @@ class CitiesSearchDelegate extends SearchDelegate {
         ),
       );
     } else if (state is QueryCitiesStateData) {
+      if (state.cities.isEmpty) {
+        return _emptyResultsView(query);
+      }
       return _buildQueryResultList(state.cities);
     } else {
       return Container();
@@ -69,8 +72,7 @@ class CitiesSearchDelegate extends SearchDelegate {
       itemCount: cities.length,
       itemBuilder: (context, index) => GestureDetector(
         onTap: () {
-          Provider.of<WeatherStore>(context, listen: false)
-              .addCity(cities[index]);
+          BlocProvider.of<FetchWeatherCubit>(context).addNewCity(cities[index]);
           close(context, cities[index]);
         },
         child: Card(
@@ -81,5 +83,9 @@ class CitiesSearchDelegate extends SearchDelegate {
         ),
       ),
     );
+  }
+
+  Widget _emptyResultsView(String query) {
+    return Center(child: Text("Couldn't find cities for: $query"));
   }
 }

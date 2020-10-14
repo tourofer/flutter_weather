@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ofer_intro_flutter/weather/bloc/fetch_weather_cubit.dart';
+import 'package:ofer_intro_flutter/weather/bloc/query_cities_bloc.dart';
 import 'package:ofer_intro_flutter/weather/models/app_navigator.dart';
 import 'package:ofer_intro_flutter/weather/models/city_model.dart';
 import 'package:ofer_intro_flutter/weather/models/weather_model.dart';
@@ -22,14 +24,12 @@ class _WeatherScreenListState extends State<WeatherScreenList> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<FetchWeatherCubit>(context, listen: false)
-          .fetchAllCitiesWeather();
+      BlocProvider.of<FetchWeatherCubit>(context).fetchAllCitiesWeather();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    //TODO suppport add city, swipe to delete & reorder
     return Scaffold(
         appBar: AppBar(
           title: Text('Cities Weather'),
@@ -39,7 +39,9 @@ class _WeatherScreenListState extends State<WeatherScreenList> {
               child: GestureDetector(
                   onTap: () {
                     showSearch(
-                        context: context, delegate: CitiesSearchDelegate());
+                        context: context,
+                        delegate: CitiesSearchDelegate(
+                            BlocProvider.of<QueryCitiesBloc>(context)));
                   },
                   child: Icon(
                     Icons.search,

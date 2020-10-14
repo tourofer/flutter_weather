@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ofer_intro_flutter/weather/bloc/connection_checker.dart';
+import 'package:ofer_intro_flutter/weather/models/city_model.dart';
 import 'package:ofer_intro_flutter/weather/models/weatherStates.dart';
 import 'package:ofer_intro_flutter/weather/models/weather_model.dart';
 import 'package:ofer_intro_flutter/weather/models/async_resource.dart';
@@ -11,27 +12,11 @@ import 'package:http/http.dart' as http;
 class FetchWeatherCubit extends Cubit<WeatherState> {
   final WeatherStore weatherStore;
 
-  FetchWeatherCubit(this.weatherStore) : super(WeatherStateLoading()) {
-    weatherStore.addListener(fetchNeededCities);
-  }
+  FetchWeatherCubit(this.weatherStore) : super(WeatherStateLoading());
 
-  void fetchNeededCities() {
-    final citiesToFetch = weatherStore.cities
-        .where((element) {
-          final cityData = weatherStore.items[element.id];
-          return !(cityData is AsyncResourceLoading) &&
-              !(cityData is AsyncResourceSuccess);
-        })
-        .map((e) => e.id)
-        .toList();
-
-    fetchCitiesWeather(citiesToFetch);
-  }
-
-  @override
-  Future<void> close() {
-    weatherStore.removeListener(fetchNeededCities);
-    return super.close();
+  void addNewCity(City city) {
+    fetchCitiesWeather([city.id]);
+    weatherStore.addCity(city);
   }
 
   void fetchAllCitiesWeather() async {

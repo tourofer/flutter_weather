@@ -18,7 +18,10 @@ class _WeatherScreenListState extends State<WeatherScreenList> {
   @override
   void initState() {
     super.initState();
-    Provider.of<WeatherCubit>(context, listen: false).fetchAllCitiesWeather();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<WeatherCubit>(context, listen: false).fetchAllCitiesWeather();
+    });
   }
 
   @override
@@ -54,7 +57,9 @@ class CityOverviewWeatherItem extends StatelessWidget {
             child: Text('${city.name}:'),
           ),
           AsyncResourceConsumer<WeatherStore, SingleForcastItem>(
-              onError: (_) => WeatherErrorWidget(),
+              onError: (_, hadConnection) => WeatherErrorWidget(
+                    hadConnection: hadConnection,
+                  ),
               onSuccess: (data) => CityWeatherWidget(
                     city: city,
                     forcastItem: data,
@@ -75,7 +80,10 @@ class CityOverviewWeatherItem extends StatelessWidget {
       final forcast = cityResource.data.forcastItems.first;
       return AsyncResourceSuccess(forcast);
     } else if (cityResource is AsyncResourceError) {
-      return AsyncResourceError();
+      final errorResource = (cityResource as AsyncResourceError);
+      return AsyncResourceError(
+          hadConnectivity: errorResource.hadConnectivity,
+          error: errorResource.error);
     } else {
       return AsyncResourceLoading();
     }

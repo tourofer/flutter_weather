@@ -3,7 +3,7 @@ import 'package:ofer_intro_flutter/weather/models/async_resource.dart';
 import 'package:provider/provider.dart';
 
 class AsyncResourceConsumer<ChangeNotifier, DataType> extends StatelessWidget {
-  final Widget Function(dynamic e) onError;
+  final Widget Function(dynamic e, bool hadConnection) onError;
   final Widget Function() onLoading;
   final Widget Function(DataType data) onSuccess;
 
@@ -22,7 +22,8 @@ class AsyncResourceConsumer<ChangeNotifier, DataType> extends StatelessWidget {
     return Selector<ChangeNotifier, AsyncResource<DataType>>(
         builder: (context, value, child) {
           if (value is AsyncResourceError) {
-            return onError((value as AsyncResourceError).error);
+            final resource = (value as AsyncResourceError<DataType>);
+            return onError(resource.error, resource.hadConnectivity);
           } else if (value is AsyncResourceSuccess) {
             return onSuccess((value as AsyncResourceSuccess).data);
           } else {

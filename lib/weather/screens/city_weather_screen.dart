@@ -39,7 +39,10 @@ class CityWeatherContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AsyncResourceConsumer<WeatherStore, WeatherData>(
-        onError: (_) => Center(child: WeatherErrorWidget()),
+        onError: (_, hadConnection) => Center(
+                child: WeatherErrorWidget(
+              hadConnection: hadConnection,
+            )),
         onLoading: () => Center(child: CircularProgressIndicator()),
         onSuccess: (data) => DailyForcastWidget(data: data),
         selector: (_, store) => store.items[city.id]);

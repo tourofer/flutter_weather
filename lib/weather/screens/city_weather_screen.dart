@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ofer_intro_flutter/weather/bloc/weather_model.dart';
-import 'package:ofer_intro_flutter/weather/models/async_resource.dart';
+import 'package:ofer_intro_flutter/weather/widgets/async_resource_consumer.dart';
 import 'package:ofer_intro_flutter/weather/widgets/daily_forcast_widget.dart';
 import 'package:ofer_intro_flutter/weather/widgets/weather_error_widget.dart';
-import 'package:provider/provider.dart';
 
 import '../models/weather_change_notifier.dart';
 
@@ -39,19 +38,10 @@ class CityWeatherContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<WeatherStore, AsyncResource<WeatherData>>(
-      builder: (context, value, child) {
-        if (value is AsyncResourceSuccess) {
-          return DailyForcastWidget(
-            data: (value as AsyncResourceSuccess).data,
-          );
-        } else if (value is AsyncResourceError) {
-          return Center(child: WeatherErrorWidget());
-        } else {
-          return Center(child: CircularProgressIndicator());
-        }
-      },
-      selector: (_, store) => store.items[city.id],
-    );
+    return AsyncResourceConsumer<WeatherStore, WeatherData>(
+        onError: (_) => Center(child: WeatherErrorWidget()),
+        onLoading: () => Center(child: CircularProgressIndicator()),
+        onSuccess: (data) => DailyForcastWidget(data: data),
+        selector: (_, store) => store.items[city.id]);
   }
 }

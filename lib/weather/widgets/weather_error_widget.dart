@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weatherEvents.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weather_bloc.dart';
+import 'package:ofer_intro_flutter/weather/bloc/weather_cubit.dart';
 
 class WeatherErrorWidget extends StatelessWidget {
   @override
@@ -11,9 +10,9 @@ class WeatherErrorWidget extends StatelessWidget {
         children: [
           Text("There was an error, please try again"),
           RaisedButton(
-            child: Text("Retry"),
-            onPressed: () => context.bloc<WeatherBloc>().add(FetchAllWeather()),
-          )
+              child: Text("Retry"),
+              onPressed: () =>
+                  context.bloc<WeatherCubit>().fetchAllCitiesWeather())
         ],
       ),
     );

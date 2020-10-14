@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ofer_intro_flutter/weather/bloc/weather_cubit.dart';
 import 'package:ofer_intro_flutter/weather/models/app_navigator.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weatherEvents.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weather_bloc.dart';
 import 'package:ofer_intro_flutter/weather/bloc/weather_model.dart';
 import 'package:ofer_intro_flutter/weather/models/async_resource.dart';
 import 'package:ofer_intro_flutter/weather/models/weather_change_notifier.dart';
+import 'package:ofer_intro_flutter/weather/widgets/async_resource_consumer.dart';
 import 'package:ofer_intro_flutter/weather/widgets/forecast_item_widget.dart';
 import 'package:ofer_intro_flutter/weather/widgets/weather_error_widget.dart';
 import 'package:provider/provider.dart';
@@ -18,11 +18,12 @@ class _WeatherScreenListState extends State<WeatherScreenList> {
   @override
   void initState() {
     super.initState();
-    Provider.of<WeatherBloc>(context, listen: false).add(FetchAllCityWeather());
+    Provider.of<WeatherCubit>(context, listen: false).fetchAllCitiesWeather();
   }
 
   @override
   Widget build(BuildContext context) {
+    //TODO suppport add city, swipe to delete & reorder
     return Scaffold(
         appBar: AppBar(title: Text('Cities Weather')),
         body: Selector<WeatherStore, List<City>>(
@@ -43,31 +44,25 @@ class CityOverviewWeatherItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //TODO keep all items in 1 card with min height for better UI
-    return Selector<WeatherStore, AsyncResource<SingleForcastItem>>(
-        builder: (context, value, child) {
-      if (value is AsyncResourceError) {
-        return WeatherErrorWidget();
-      } else if (value is AsyncResourceSuccess<SingleForcastItem>) {
-        return CitiesWeatherListWidget(
-          city: city,
-          forcastItem: value.data,
-        );
-      } else {
-        return Center(child: CircularProgressIndicator());
-      }
-    }, selector: (_, store) {
-      //only listen to the relevant item latest weather forcast
-      final AsyncResource<WeatherData> cityResource = store.items[city.id];
-      if (cityResource is AsyncResourceSuccess<WeatherData>) {
-        final forcast = cityResource.data.forcastItems.first;
-        return AsyncResourceSuccess(forcast);
-      } else if (cityResource is AsyncResourceError) {
-        return AsyncResourceError();
-      } else {
-        return AsyncResourceLoading();
-      }
-    });
+    return AsyncResourceConsumer<WeatherStore, SingleForcastItem>(
+        onError: (_) => WeatherErrorWidget(),
+        onSuccess: (data) => CitiesWeatherListWidget(
+              city: city,
+              forcastItem: data,
+            ),
+        onLoading: () => Center(child: CircularProgressIndicator()),
+        selector: (_, store) {
+          //only listen to the relevant item latest weather forcast
+          final AsyncResource<WeatherData> cityResource = store.items[city.id];
+          if (cityResource is AsyncResourceSuccess<WeatherData>) {
+            final forcast = cityResource.data.forcastItems.first;
+            return AsyncResourceSuccess(forcast);
+          } else if (cityResource is AsyncResourceError) {
+            return AsyncResourceError();
+          } else {
+            return AsyncResourceLoading();
+          }
+        });
   }
 }
 

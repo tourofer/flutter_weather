@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ofer_intro_flutter/weather/bloc/weather_bloc.dart';
+import 'package:ofer_intro_flutter/weather/bloc/weather_cubit.dart';
 import 'package:ofer_intro_flutter/weather/screens/city_weather_screen.dart';
 import 'package:ofer_intro_flutter/weather/screens/weather_list_screen.dart';
 import 'package:ofer_intro_flutter/weather/models/weather_change_notifier.dart';
@@ -49,9 +49,9 @@ standAloneDependencies() => [
       ),
     ];
 proxyProviders() => [
-      BlocProvider<WeatherBloc>(
+      BlocProvider<WeatherCubit>(
         lazy: false,
         create: (BuildContext context) =>
-            WeatherBloc(Provider.of(context, listen: false)),
+            WeatherCubit(Provider.of(context, listen: false)),
       ),
     ];
